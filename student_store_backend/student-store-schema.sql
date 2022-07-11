@@ -19,13 +19,13 @@ CREATE TABLE products (
 
 CREATE TABLE orders (
   id          SERIAL PRIMARY KEY,
-  customer_id INTEGER NOT NULL REFERENCES users (id),
+  customer_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE order_details (
-  order_id    INTEGER NOT NULL REFERENCES orders (id),
-  product_id  INTEGER NOT NULL REFERENCES products (id),
+  order_id    INTEGER NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   quantity    INTEGER NOT NULL DEFAULT 1,
   discount    INTEGER,
   PRIMARY KEY(order_id, product_id)
