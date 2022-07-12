@@ -20,8 +20,10 @@ router.post('/', requireAuthenticatedUser, (req,res,next) => {
     try {
        //calls the CreateOrder method
        const user = res.locals.user
-       let newOrder = Order.createOrder({user, order: req.body})
-       return res.status(201).json({newOrder})
+       console.log("req-body = ", req.body)
+       Order.createOrder({user, order: req.body})
+       console.log("finished createOrder method")
+       return res.status(201).json()
     }
     catch (err) {
         next(err)

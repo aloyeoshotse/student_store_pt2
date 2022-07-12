@@ -26,6 +26,8 @@ class Order {
         //takes the user's order and stores it in the database
         const userEmail = user.user.email
         const order = user.order
+        // {1: 3, 2: 2, 3: 1}
+        //format = {productId: quantity}
 
         const results = await db.query(
             `
@@ -37,13 +39,12 @@ class Order {
 
         const orderId = results.rows[0].id;
 
-        order.forEach((product) =>{
-            //order --> [{productId: #, quantity; #}]
+        Object.keys(order).forEach((productId) => {
             db.query(
                 `
                  INSERT INTO order_details (order_id, product_id, quantity)
-                 VALUES ($1, $2, $3);
-                `, [orderId, product.productId, product.quantity]
+                 VALUES ($1, $2, $3)
+                `, [orderId, productId, order[productId]]
             );
         })
     }

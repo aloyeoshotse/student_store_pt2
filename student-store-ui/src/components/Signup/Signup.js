@@ -54,7 +54,7 @@ export default function Signup({ user, setUser }) {
       setErrors((e) => ({ ...e, passwordConfirm: null }))
     }
 
-    const { data, error } = await apiClient.registerUser({ email: form.email, password: form.password })
+    const { data, error } = await apiClient.registerUser({ name: form.name, email: form.email, password: form.password })
     if (error) { setErrors((e) => ({ ...e, form: error })) }
     if (data?.user) {
       setUser(data.user)

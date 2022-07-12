@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import axios from "axios"
+import apiClient from "../../services/apiClient"
 import Home from "../Home/Home"
 import Signup from "../Signup/Signup"
 import Login from "../Login/Login"
@@ -30,31 +31,35 @@ export default function App() {
     setSearchInputValue(event.target.value)
   }
 
+  
   const handleOnCheckout = async () => {
     setIsCheckingOut(true)
 
-    try {
-      const res = await axios.post("http://localhost:3001/orders", { order: cart })
-      if (res?.data?.order) {
-        setOrders((o) => [...res.data.order, ...o])
-        setIsCheckingOut(false)
-        setCart({})
-        return res.data.order
-      } else {
-        setError("Error checking out.")
-      }
-    } catch (err) {
-      console.log(err)
-      const message = err?.response?.data?.error?.message
-      setError(message ?? String(err))
-    } finally {
-      setIsCheckingOut(false)
+    await apiClient.createOrder(cart)
+    console.log("made it to line 39 in app.js")
+    const {data, error} = await apiClient.listOrders()
+
+    console.log("data = ", data)
+    
+    if (data) { 
+      setOrders((o) => [...data.orders, ...o])
+      setCart({})
     }
+    if (error) { setError(error) }
+
+
+    setIsCheckingOut(false)
   }
+
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       setIsFetching(true)
+
+      // const { data, error } = await apiClient.listProducts()
+      // if (data) { setProducts(data.products) }
+      // if (error) { setError(error) }
 
       try {
         const res = await axios.get("http://localhost:3001/store")
@@ -72,7 +77,24 @@ export default function App() {
       }
     }
 
+      // setIsFetching(false)
+
     fetchProducts()
+  }, [])
+
+
+  useEffect(() => {
+    const fetchAuthedUser = async () => {
+      const { data, error } = await apiClient.fetchUserFromToken()
+      if (data) { setUser(data.user) }
+      if (error) { setError(error) }
+    }
+
+    const token = localStorage.getItem("student_store_token")
+    if (token) {
+      apiClient.setToken(token)
+      fetchAuthedUser()
+    }
   }, [])
 
   return (
