@@ -41,11 +41,11 @@ export default function Login({ user, setUser }) {
       if (res?.data?.user) {
         setUser(res.data.user)
       } else {
-        setErrors((e) => ({ ...e, form: "Invalid username/password combination" }))
+        setErrors((e) => ({ ...e, form: "Invalid email/password combination" }))
       }
     } catch (err) {
       console.log(err)
-      setErrors((e) => ({ ...e, form: "Invalid username/password combination" }))
+      setErrors((e) => ({ ...e, form: "Invalid email/password combination" }))
     } finally {
       setIsProcessing(false)
     }
